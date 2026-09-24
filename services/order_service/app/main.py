@@ -5,12 +5,12 @@ from fastapi import FastAPI
 from app.config import settings
 from app.infrastructure.kafka import KafkaEventPublisher, ensure_topics
 
-from .api.routes import ORDER_CREATED_TOPIC, router
+from .api.routes import ORDERS_EVENTS_TOPIC, router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await ensure_topics(settings.kafka_bootstrap_servers, [ORDER_CREATED_TOPIC])
+    await ensure_topics(settings.kafka_bootstrap_servers, [ORDERS_EVENTS_TOPIC])
     publisher = KafkaEventPublisher(settings.kafka_bootstrap_servers)
     await publisher.start()
     app.state.event_publisher = publisher

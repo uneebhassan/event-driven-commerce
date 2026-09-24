@@ -13,7 +13,7 @@ from .schemas import CreateOrderRequest, OrderResponse
 
 router = APIRouter()
 
-ORDER_CREATED_TOPIC = "order.created"
+ORDERS_EVENTS_TOPIC = "orders.events"
 
 
 def get_event_publisher(request: Request) -> KafkaEventPublisher:
@@ -42,9 +42,11 @@ async def create_order(
         occurred_at=datetime.now(timezone.utc),
         order_id=order.id,
         customer_id=order.customer_id,
+        total_amount=order.total_amount,
+        currency=order.currency,
     )
     await publisher.publish(
-        ORDER_CREATED_TOPIC,
+        ORDERS_EVENTS_TOPIC,
         event.model_dump_json().encode("utf-8"),
     )
 
